@@ -27,6 +27,9 @@
     <ClInclude Include="RealPhake Ace Casino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="menutext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RealPhake Ace Casino.cpp">
