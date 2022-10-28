@@ -8,13 +8,14 @@
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK UserInfoProc(HWND, UINT, WPARAM, LPARAM);
 // Handlers
-HBITMAP hMainBG;
+HBITMAP hMainBG, hMemberBG;
 HMENU	hMenu, hTutorialMenu;
-HWND	hMainWnd, hUserInfo, hName, hMx, hMainBGWnd;
+HWND	hMainWnd, hUserInfo, hFirstname, hLastname, hMx, hMainBGWnd, hMemberBGWnd;
 
 int alreadyOpen = 0; // The thing that prevents you opening more than one menu
 
-wchar_t userName[50] = L"";
+wchar_t userFirstname[50] = L"";
+wchar_t userLastname[50] = L"";
 wchar_t userMx[5] = L"Mx.";
 
 // To do: Dialogue and pronouns(?)
@@ -34,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
 	return -1;
 
   // Make main window
-  hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 10, 640, 479, NULL, NULL, NULL, NULL);
+  hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
 
   // Register for User Info window
   WNDCLASSW mui = {0};
@@ -63,7 +64,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 	  hTutorialMenu	= CreateMenu();
   
 	  // Bitmap shit(map)
-	  hMainBG = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	  hMainBG = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\testimage2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	  hMainBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
 	  SendMessageW(hMainBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hMainBG);
 
@@ -102,8 +103,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		// Make User Info window
 		case 1:
 		  if (alreadyOpen == 0){
-			hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 615, 75, 685, 425, hMainWnd, NULL, NULL, NULL);
-			ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
+			hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 615, 75, 691, 439, hMainWnd, NULL, NULL, NULL);
+			//ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
 			alreadyOpen ++;
 		  }
 		  break;
@@ -185,14 +186,21 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // User Info window interactables
   switch(msg){
 	case WM_CREATE:
+	  // Bitmap shit(map)
+	  hMemberBG = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\MemberCard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	  hMemberBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
+	  SendMessageW(hMemberBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hMemberBG);
+	  
 	  // Buttons
-	  CreateWindow(L"BUTTON", L"Save", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 520, 345, 50, 25, hWnd, (HMENU)1, NULL, NULL);
-	  CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 575, 345, 50, 25, hWnd, (HMENU)2, NULL, NULL);
+	  CreateWindow(L"BUTTON", L"Save", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 555, 345, 50, 25, hWnd, (HMENU)1, NULL, NULL);
+	  CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)2, NULL, NULL);
 
 	  // Controls
-	  CreateWindowW(L"STATIC", L"Member:", WS_VISIBLE | WS_CHILD, 35, 15, 64, 13, hWnd, NULL, NULL, NULL);
-	  hMx	= CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 35, 35, 35, 20, hWnd, NULL, NULL, NULL);
-	  hName	= CreateWindowW(L"EDIT", userName, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 72, 35, 175, 20, hWnd, NULL, NULL, NULL);
+	  CreateWindowW(L"STATIC", L"Testing!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
+	  CreateWindowW(L"STATIC", L"Testing also!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
+	  hMx			= CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
+	  hFirstname	= CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
+	  hLastname		= CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
 	  break;
 
 	case WM_COMMAND:
@@ -200,11 +208,12 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 		case 1:
 		  // To do: Fully implemented save function
 		  GetWindowTextW(hMx, userMx, 5);
-		  GetWindowTextW(hName, userName, 50);
+		  GetWindowTextW(hFirstname, userFirstname, 50);
+		  GetWindowTextW(hLastname, userLastname, 50);
 		  break;
 		case 2:
 		  alreadyOpen --;
-		  ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
+		  //ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
 		  DestroyWindow(hWnd);
 		  break;
 	  }
