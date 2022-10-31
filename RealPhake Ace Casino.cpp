@@ -24,32 +24,32 @@ wchar_t userMx[5] = L"Mx.";
 
 // To do: Dialogue and pronouns(?)
 
+// FINALLY GOT THE ID MAKER WORKING!! To do: Implement save function properly now that it works, also make the first time user setup
 string gen_random(const int len){
   static const char alphanum[] =
-	"0123456789"
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    "0123456789"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   string tmp_s;
-  tmp_s.reserve(len);
-
-  for (int i = 0; i < len; ++i){
-	tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
-  }
+  tmp_s.reserve(21);
+  for (int i = 0; i < 21; ++i){
+    tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+  }  
   return tmp_s;
 }
 
-int testing(){
-  srand((unsigned)time(0));
-  gen_random(21);
-  return 0;
-}
-
 void mymomma(){
-  wofstream othertest("UserInfo.txt", ios::out);
-  wchar_t hrm[] = L"L is real";
-  if(othertest.is_open()){
-	for(int i = 0; hrm[i] != '\0'; i++)
-	  othertest.put(hrm[i]);
-	othertest.close();
+  wofstream fileout("UserInfo.txt", ios::out);
+  srand((unsigned)time(0));
+  char* ID = new char[gen_random(21).length() + 1];
+
+  for(int i = 0; i < gen_random(21).length(); i++){
+    ID[i] = gen_random(21)[i];
+  }
+
+  if(fileout.is_open()){
+    for(int i = 0; ID[i] != 0; i++)
+      fileout.put(ID[i]);
+    fileout.close();
   }
 }
 
@@ -62,6 +62,7 @@ void yomomma(){
 	test.close();
   }
 }
+// End of ID maker
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow){ // Main
   // Register for main window
@@ -195,7 +196,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		// The games
 		case 13:
 		  // To do: Add Poker
-		  mymomma();
+		  mymomma(); // ID maker is being temporarily put on the poker button for testing purposes
 		  yomomma();
 		  break;
 		case 14:
