@@ -2,8 +2,12 @@
 
 #include <iostream>
 #include <windows.h>
+#include <fstream>
+#include <string>
 
 #include "menutext.h"
+
+using namespace std;
 
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK UserInfoProc(HWND, UINT, WPARAM, LPARAM);
@@ -20,8 +24,46 @@ wchar_t userMx[5] = L"Mx.";
 
 // To do: Dialogue and pronouns(?)
 
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow){ // Main
+string gen_random(const int len){
+  static const char alphanum[] =
+	"0123456789"
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  string tmp_s;
+  tmp_s.reserve(len);
 
+  for (int i = 0; i < len; ++i){
+	tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+  }
+  return tmp_s;
+}
+
+int testing(){
+  srand((unsigned)time(0));
+  gen_random(21);
+  return 0;
+}
+
+void mymomma(){
+  wofstream othertest("UserInfo.txt", ios::out);
+  wchar_t hrm[] = L"L is real";
+  if(othertest.is_open()){
+	for(int i = 0; hrm[i] != '\0'; i++)
+	  othertest.put(hrm[i]);
+	othertest.close();
+  }
+}
+
+void yomomma(){
+  wifstream test("UserInfo.txt", ios::in);
+  wstring line;
+  if(test.is_open()){
+	getline(test, line);
+	MessageBox(hMainWnd, line.c_str(), L"Test message", MB_OK);
+	test.close();
+  }
+}
+
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow){ // Main
   // Register for main window
   WNDCLASSW wc = {0};
 
@@ -103,7 +145,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		// Make User Info window
 		case 1:
 		  if (alreadyOpen == 0){
-			hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 615, 75, 691, 439, hMainWnd, NULL, NULL, NULL);
+			hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 615, 300, 691, 439, hMainWnd, NULL, NULL, NULL);
 			//ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
 			alreadyOpen ++;
 		  }
@@ -153,6 +195,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		// The games
 		case 13:
 		  // To do: Add Poker
+		  mymomma();
+		  yomomma();
 		  break;
 		case 14:
 		  // To do: Add Blackjack
@@ -196,8 +240,8 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 	  CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)2, NULL, NULL);
 
 	  // Controls
-	  CreateWindowW(L"STATIC", L"Testing!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
-	  CreateWindowW(L"STATIC", L"Testing also!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
+	  CreateWindowW(L"STATIC", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
+	  CreateWindowW(L"STATIC", L"Testing!!!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
 	  hMx			= CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
 	  hFirstname	= CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
 	  hLastname		= CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
