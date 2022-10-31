@@ -38,15 +38,12 @@ string gen_random(const int len){
 }
 
 void mymomma(){
-  wofstream fileout("UserInfo.txt", ios::out);
   srand((unsigned)time(0));
+  wofstream fileout("UserInfo.txt", ios::out);
   char* ID = new char[gen_random(21).length() + 1];
-
-  for(int i = 0; i < gen_random(21).length(); i++){
-    ID[i] = gen_random(21)[i];
-  }
-
   if(fileout.is_open()){
+	for(int i = 0; i < gen_random(21).length(); i++)
+	  ID[i] = gen_random(21)[i];
     for(int i = 0; ID[i] != 0; i++)
       fileout.put(ID[i]);
     fileout.close();
@@ -64,13 +61,13 @@ void yomomma(){
 }
 // End of ID maker
 
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow){ // Main
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd){ // Main
   // Register for main window
   WNDCLASSW wc = {0};
 
   wc.hbrBackground		= (HBRUSH)COLOR_WINDOW;
   wc.hCursor			= LoadCursor(NULL, IDC_ARROW);
-  wc.hInstance			= hInst;
+  wc.hInstance			= hInstance;
   wc.lpszClassName		= L"mainWindowClass";
   wc.lpfnWndProc		= MainWndProc;
 
@@ -85,7 +82,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
 
   mui.hbrBackground		= (HBRUSH)COLOR_WINDOW;
   mui.hCursor			= LoadCursor(NULL, IDC_ARROW);
-  mui.hInstance			= hInst;
+  mui.hInstance			= hInstance;
   mui.lpszClassName		= L"userInfoClass";
   mui.lpfnWndProc		= UserInfoProc;
 
@@ -226,6 +223,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 	  PostQuitMessage(0);
 	  break;
   }
+  return 0;
 }
 
 LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // User Info window interactables
@@ -266,4 +264,5 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 	default:
 	  return DefWindowProcW(hWnd, msg, wp, lp);
   }
+  return 0;
 }
