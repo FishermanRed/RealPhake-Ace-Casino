@@ -40,8 +40,8 @@ void LRESULTifstream(){
 
 string gen_random(const int len){
   static const char alphanum[] =
-    "0123456789"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    "0123456789987654321001234567899876543210"
+    "BCDFGHJKLMNPQRSTVWXYZ";
   string tmp_s;
   tmp_s.reserve(21);
   for (int i = 0; i < 21; ++i){
@@ -49,7 +49,6 @@ string gen_random(const int len){
   }  
   return tmp_s;
 }
-// note line.c_str() is a thing
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd){ // Main
   // Register for main window
@@ -96,10 +95,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
       srand((unsigned)time(0));
       wofstream fileout("UserInfo.txt", ios::out);
-      char* ID = new char[gen_random(21).length() + 1];
+      char* ID = new char[gen_random(20).length() + 1];
       if(fileout.is_open()){
-        for(int i = 0; i < gen_random(21).length(); i++)
-          ID[i] = gen_random(21)[i];
+        for(int i = 0; i < gen_random(20).length(); i++)
+          ID[i] = gen_random(20)[i];
         for(int i = 0; ID[i] != 0; i++)
           fileout.put(ID[i]);
         fileout.close();
@@ -172,6 +171,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
         // Card skins page
         case 2:
           // To do: Card skins page
+          MessageBox(hMainWnd, L"Coming soon, I'm working on it", L"Nah", MB_OK);
           break;
 
         // Tutorial pages
@@ -260,9 +260,9 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
       // Controls
       CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
       CreateWindowW(L"STATIC", L"Testing!!!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
-      hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
-      hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
-      hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
+      hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
       break;
 
     case WM_COMMAND:
@@ -293,12 +293,30 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS window interactables
   switch(msg){
     case WM_CREATE:
+      // Bitmap shit(map)
+
+      // Buttons
+      CreateWindow(L"BUTTON", L"Register!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 475, 345, 75, 25, hWnd, (HMENU)1, NULL, NULL);
+
       // Controls
       LRESULTifstream();
       CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
+      hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
+      hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
       break;
 
     case WM_COMMAND:
+      switch(wp){
+        case 1: //To do: Functioning namesave
+          GetWindowTextW(hMx, userMx, 5);
+          GetWindowTextW(hFirstname, userFirstname, 50);
+          GetWindowTextW(hLastname, userLastname, 50);
+          ShowWindow(hWnd, 0);
+          hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+          MessageBox(hMainWnd, L"Now you're good to go!\nEnjoy your stay, and go earn some cash!", L"Registration Complete!", MB_OK);
+          break;
+      }
       break;
 
     case WM_DESTROY:
