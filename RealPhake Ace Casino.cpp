@@ -1,7 +1,7 @@
 ﻿// Red here. Making my own poker/casino program so I can feed my addiction without having to open any games or gamble real money online or whatever.
 
-#include <iostream>
 #include <windows.h>
+#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -9,18 +9,23 @@
 
 using namespace std;
 
-LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK UserInfoProc(HWND, UINT, WPARAM, LPARAM);
+// Window procedures
+LRESULT CALLBACK MainWndProc  (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK UserInfoProc (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK FTUSproc	  (HWND, UINT, WPARAM, LPARAM);
+
 // Handlers
-HBITMAP hMainBG, hMemberBG;
-HMENU	hMenu, hTutorialMenu;
-HWND	hMainWnd, hUserInfo, hFirstname, hLastname, hMx, hMainBGWnd, hMemberBGWnd;
+HBITMAP hMainBG, hMemberBG, hFTUSbg;		  // Bitmap backgrounds
+HMENU	hMenu, hTutorialMenu;				  // Menus
+HWND	hMainWnd, hUserInfo, hFTUS,			  // Windows
+		hFirstname, hLastname, hMx,			  // Saveable Text
+		hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
 
 int alreadyOpen = 0; // The thing that prevents you opening more than one menu
 
 wchar_t userFirstname[50] = L"";
-wchar_t userLastname[50] = L"";
-wchar_t userMx[5] = L"Mx.";
+wchar_t userLastname[50]  = L"";
+wchar_t userMx[5]		  = L"Mx.";
 
 // To do: Dialogue and pronouns(?)
 
@@ -87,6 +92,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   mui.lpfnWndProc		= UserInfoProc;
 
   if(!RegisterClassW(&mui))
+	return -1;
+
+  // Register for First Time User Setup window
+  WNDCLASSW ftus = {0};
+
+  ftus.hbrBackground	= (HBRUSH)COLOR_WINDOW;
+  ftus.hCursor			= LoadCursor(NULL, IDC_ARROW);
+  ftus.hInstance		= hInstance;
+  ftus.lpszClassName	= L"FTUSwindowClass";
+  ftus.lpfnWndProc		= FTUSproc;
+
+  if(!RegisterClassW(&ftus))
 	return -1;
 
   MSG msg = {0};
@@ -198,6 +215,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		  break;
 		case 14:
 		  // To do: Add Blackjack
+		  hFTUS = CreateWindowW(L"FTUSwindowClass", L"Welcome to RealPhake Ace Casino!", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+		  // Make FTUS window is being temporarily put on the blackjack button for testing purposes
 		  break;
 		case 15:
 		  // To do: Add Tycoon
@@ -216,12 +235,13 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		  break;
 	  }
 	  break;
-	default:
-	  return DefWindowProcW(hWnd, msg, wp, lp);
 
 	case WM_DESTROY:
 	  PostQuitMessage(0);
 	  break;
+
+	default:
+	  return DefWindowProcW(hWnd, msg, wp, lp);
   }
   return 0;
 }
@@ -261,6 +281,27 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 		  break;
 	  }
 	  break;
+
+	case WM_DESTROY:
+	  break;
+
+	default:
+	  return DefWindowProcW(hWnd, msg, wp, lp);
+  }
+  return 0;
+}
+
+LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS window interactables
+  switch(msg){
+	case WM_CREATE:
+	  break;
+
+	case WM_COMMAND:
+	  break;
+
+	case WM_DESTROY:
+	  break;
+
 	default:
 	  return DefWindowProcW(hWnd, msg, wp, lp);
   }

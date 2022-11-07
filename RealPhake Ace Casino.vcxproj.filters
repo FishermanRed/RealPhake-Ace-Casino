@@ -41,9 +41,4 @@
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="RealPhake Ace Casino.exe">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>
