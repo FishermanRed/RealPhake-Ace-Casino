@@ -12,24 +12,32 @@ using namespace std;
 // Window procedures
 LRESULT CALLBACK MainWndProc  (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK UserInfoProc (HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK FTUSproc	  (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK FTUSproc	(HWND, UINT, WPARAM, LPARAM);
 
 // Handlers
 HBITMAP hMainBG, hMemberBG, hFTUSbg;		  // Bitmap backgrounds
-HMENU	hMenu, hTutorialMenu;				  // Menus
-HWND	hMainWnd, hUserInfo, hFTUS,			  // Windows
-		hFirstname, hLastname, hMx,			  // Saveable Text
-		hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
+HMENU	  hMenu, hTutorialMenu;			  // Menus
+HWND	  hMainWnd, hUserInfo, hFTUS,		  // Windows
+	  hFirstname, hLastname, hMx, hID,	  // Saveable Text
+	  hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
 
 int alreadyOpen = 0; // The thing that prevents you opening more than one menu
 
+wstring line;
 wchar_t userFirstname[50] = L"";
 wchar_t userLastname[50]  = L"";
 wchar_t userMx[5]		  = L"Mx.";
 
 // To do: Dialogue and pronouns(?)
 
-// FINALLY GOT THE ID MAKER WORKING!! To do: Implement save function properly now that it works, also make the first time user setup
+void LRESULTifstream(){
+  wifstream filein("UserInfo.txt", ios::in);
+  if(filein.is_open()){
+	getline(filein, line);
+  }
+  filein.close();
+}
+
 string gen_random(const int len){
   static const char alphanum[] =
     "0123456789"
@@ -41,54 +49,28 @@ string gen_random(const int len){
   }  
   return tmp_s;
 }
-
-void mymomma(){
-  srand((unsigned)time(0));
-  wofstream fileout("UserInfo.txt", ios::out);
-  char* ID = new char[gen_random(21).length() + 1];
-  if(fileout.is_open()){
-	for(int i = 0; i < gen_random(21).length(); i++)
-	  ID[i] = gen_random(21)[i];
-    for(int i = 0; ID[i] != 0; i++)
-      fileout.put(ID[i]);
-    fileout.close();
-  }
-}
-
-void yomomma(){
-  wifstream test("UserInfo.txt", ios::in);
-  wstring line;
-  if(test.is_open()){
-	getline(test, line);
-	MessageBox(hMainWnd, line.c_str(), L"Test message", MB_OK);
-	test.close();
-  }
-}
-// End of ID maker
+// note line.c_str() is a thing
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd){ // Main
   // Register for main window
   WNDCLASSW wc = {0};
 
-  wc.hbrBackground		= (HBRUSH)COLOR_WINDOW;
-  wc.hCursor			= LoadCursor(NULL, IDC_ARROW);
-  wc.hInstance			= hInstance;
-  wc.lpszClassName		= L"mainWindowClass";
+  wc.hbrBackground	= (HBRUSH)COLOR_WINDOW;
+  wc.hCursor		= LoadCursor(NULL, IDC_ARROW);
+  wc.hInstance		= hInstance;
+  wc.lpszClassName	= L"mainWindowClass";
   wc.lpfnWndProc		= MainWndProc;
 
   if(!RegisterClassW(&wc))
 	return -1;
 
-  // Make main window
-  hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
-
   // Register for User Info window
   WNDCLASSW mui = {0};
 
-  mui.hbrBackground		= (HBRUSH)COLOR_WINDOW;
-  mui.hCursor			= LoadCursor(NULL, IDC_ARROW);
-  mui.hInstance			= hInstance;
-  mui.lpszClassName		= L"userInfoClass";
+  mui.hbrBackground	= (HBRUSH)COLOR_WINDOW;
+  mui.hCursor		= LoadCursor(NULL, IDC_ARROW);
+  mui.hInstance		= hInstance;
+  mui.lpszClassName	= L"userInfoClass";
   mui.lpfnWndProc		= UserInfoProc;
 
   if(!RegisterClassW(&mui))
@@ -98,13 +80,34 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   WNDCLASSW ftus = {0};
 
   ftus.hbrBackground	= (HBRUSH)COLOR_WINDOW;
-  ftus.hCursor			= LoadCursor(NULL, IDC_ARROW);
+  ftus.hCursor		= LoadCursor(NULL, IDC_ARROW);
   ftus.hInstance		= hInstance;
   ftus.lpszClassName	= L"FTUSwindowClass";
-  ftus.lpfnWndProc		= FTUSproc;
+  ftus.lpfnWndProc	= FTUSproc;
 
   if(!RegisterClassW(&ftus))
 	return -1;
+
+  // First Time User Setup function. If user exists, makes the main window
+  wifstream filein("UserInfo.txt", ios::in);
+  if(filein.is_open()){
+	getline(filein, line);
+	if(line.empty()){
+	  MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
+	  srand((unsigned)time(0));
+	  wofstream fileout("UserInfo.txt", ios::out);
+	  char* ID = new char[gen_random(21).length() + 1];
+	  if(fileout.is_open()){
+		for(int i = 0; i < gen_random(21).length(); i++)
+		  ID[i] = gen_random(21)[i];
+		for(int i = 0; ID[i] != 0; i++)
+		  fileout.put(ID[i]);
+		fileout.close();
+	  }
+	  hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+	} else hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+	filein.close();
+  }
 
   MSG msg = {0};
 
@@ -128,28 +131,28 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 	  // Main window menu bar
 	  AppendMenu(hMenu, MF_STRING,	1, L"User Info");
 	  AppendMenu(hMenu, MF_STRING,	2, L"Card Skins");
-	  AppendMenu(hMenu, MF_POPUP,	(UINT_PTR)hTutorialMenu, L"How to Play");
+	  AppendMenu(hMenu, MF_POPUP,		(UINT_PTR)hTutorialMenu, L"How to Play");
 	  AppendMenu(hMenu, MF_STRING,	11, L"About");
 	  AppendMenu(hMenu, MF_STRING,	12, L"❡"); // To do: dynamic phake counter
 
 	  // Tutorial options
-	  AppendMenu(hTutorialMenu, MF_STRING, 3,	L"How to Play: RealPhake Ace Casino");
-	  AppendMenu(hTutorialMenu, MF_SEPARATOR,	NULL, NULL);
-	  AppendMenu(hTutorialMenu, MF_STRING, 4,	L"How to Play: Poker");
-	  AppendMenu(hTutorialMenu, MF_STRING, 5,	L"How to Play: Blackjack");
-	  AppendMenu(hTutorialMenu, MF_STRING, 6,	L"How to Play: Tycoon");
-	  AppendMenu(hTutorialMenu, MF_STRING, 7,	L"How to Play: War");
-	  AppendMenu(hTutorialMenu, MF_SEPARATOR,	NULL, NULL);
-	  AppendMenu(hTutorialMenu, MF_STRING, 8,	L"How to Play: Roulette");
-	  AppendMenu(hTutorialMenu, MF_STRING, 9,	L"How to Play: Craps");
-	  AppendMenu(hTutorialMenu, MF_STRING, 10,	L"How to Play: Slots");
+	  AppendMenu(hTutorialMenu, MF_STRING, 3,	 L"How to Play: RealPhake Ace Casino");
+	  AppendMenu(hTutorialMenu, MF_SEPARATOR,	 NULL, NULL);
+	  AppendMenu(hTutorialMenu, MF_STRING, 4,	 L"How to Play: Poker");
+	  AppendMenu(hTutorialMenu, MF_STRING, 5,	 L"How to Play: Blackjack");
+	  AppendMenu(hTutorialMenu, MF_STRING, 6,	 L"How to Play: Tycoon");
+	  AppendMenu(hTutorialMenu, MF_STRING, 7,	 L"How to Play: War");
+	  AppendMenu(hTutorialMenu, MF_SEPARATOR,	 NULL, NULL);
+	  AppendMenu(hTutorialMenu, MF_STRING, 8,	 L"How to Play: Roulette");
+	  AppendMenu(hTutorialMenu, MF_STRING, 9,	 L"How to Play: Craps");
+	  AppendMenu(hTutorialMenu, MF_STRING, 10, L"How to Play: Slots");
 	  SetMenu(hWnd, hMenu);
 
 	  // Buttons
 	  CreateWindow(L"BUTTON", L"Play Poker!",		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU)13, NULL, NULL);
 	  CreateWindow(L"BUTTON", L"Play Blackjack!",	WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 182, 300, 125, 25, hWnd, (HMENU)14, NULL, NULL);
-	  CreateWindow(L"BUTTON", L"Play Tycoon!",		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 317, 300, 125, 25, hWnd, (HMENU)15, NULL, NULL);
-	  CreateWindow(L"BUTTON", L"Play War!",			WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 452, 300, 125, 25, hWnd, (HMENU)16, NULL, NULL);
+	  CreateWindow(L"BUTTON", L"Play Tycoon!",	WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 317, 300, 125, 25, hWnd, (HMENU)15, NULL, NULL);
+	  CreateWindow(L"BUTTON", L"Play War!",		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 452, 300, 125, 25, hWnd, (HMENU)16, NULL, NULL);
 	  CreateWindow(L"BUTTON", L"Play Roulette!",	WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 115, 335, 125, 25, hWnd, (HMENU)17, NULL, NULL);
 	  CreateWindow(L"BUTTON", L"Play Craps!",		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 250, 335, 124, 25, hWnd, (HMENU)18, NULL, NULL);
 	  CreateWindow(L"BUTTON", L"Play Slots!",		WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 384, 335, 125, 25, hWnd, (HMENU)19, NULL, NULL);
@@ -210,13 +213,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
 		// The games
 		case 13:
 		  // To do: Add Poker
-		  mymomma(); // ID maker is being temporarily put on the poker button for testing purposes
-		  yomomma();
 		  break;
 		case 14:
 		  // To do: Add Blackjack
-		  hFTUS = CreateWindowW(L"FTUSwindowClass", L"Welcome to RealPhake Ace Casino!", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
-		  // Make FTUS window is being temporarily put on the blackjack button for testing purposes
 		  break;
 		case 15:
 		  // To do: Add Tycoon
@@ -259,7 +258,7 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 	  CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)2, NULL, NULL);
 
 	  // Controls
-	  CreateWindowW(L"STATIC", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
+	  CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
 	  CreateWindowW(L"STATIC", L"Testing!!!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
 	  hMx			= CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
 	  hFirstname	= CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
@@ -294,12 +293,16 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS window interactables
   switch(msg){
 	case WM_CREATE:
+	  // Controls
+	  LRESULTifstream();
+	  CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
 	  break;
 
 	case WM_COMMAND:
 	  break;
 
 	case WM_DESTROY:
+	  PostQuitMessage(0);
 	  break;
 
 	default:
