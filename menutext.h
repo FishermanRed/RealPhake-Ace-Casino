@@ -2,7 +2,7 @@
 
 #define PLACEHOLDER L"Dummy text for now"
 
-#define WELCOMETEXT L"bruhguhruh"
+#define WELCOMETEXT L"Welcome to our world-famous Ace Casino!\nThe best joint around that you can gamble all of your Phake for more and more and more and more! What's that? You think that we use fake currency for prizes? I can assure you, dear customer, that 100% of your earnings will be Real Phake! Ah, I see that you're planning to sign up for our VIP plan! Let me show you where to register..."
 
 #define ABOUT_MENUTEXT L"\t\t            ♠         ♡         ♣         ♢\n\t\t            RealPhake Ace Casino\n\t\t                     Version 1.0\n\t\t            ♤         ♥         ♧         ♦\n\nRealPhake Ace Casino is a personal project made by Red K.\n\nI have not copyrighted anything and I don't plan on charging anyone for this game, so if you paid money for this, I'm sorry but you got ripped off. Everything in this program falls under fair use; no copyrighted material contained in this program belongs to me in any way, it's just for fun and I am not making money off of it.\n\nSpecial Thanks to Professor Seth Reed and The Pentamollis Project.\n\nFeel free to contact me through Discord:\nRed#0681"
 

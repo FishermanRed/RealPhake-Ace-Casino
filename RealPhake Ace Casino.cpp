@@ -24,8 +24,8 @@ HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
 int alreadyOpen = 0; // The thing that prevents you opening more than one menu
 
 wstring line;
-wchar_t userFirstname[50] = L"";
-wchar_t userLastname[50]  = L"";
+wchar_t userFirstname[50] = L"Testname";
+wchar_t userLastname[50]  = L"Lastname";
 wchar_t userMx[5]         = L"Mx.";
 
 // To do: Dialogue and pronouns(?)
@@ -38,16 +38,16 @@ void LRESULTifstream(){
   filein.close();
 }
 
-string gen_random(const int len){
-  static const char alphanum[] =
+string makeID(const int len){ // The thing that makes the user's unique ID
+  static const char ID[] =
     "0123456789987654321001234567899876543210"
-    "BCDFGHJKLMNPQRSTVWXYZ";
-  string tmp_s;
-  tmp_s.reserve(21);
+    "BCDFGHJKLMNPRSTVWXYZ";
+  string make;
+  make.reserve(21);
   for (int i = 0; i < 21; ++i){
-    tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+    make += ID[rand() % (sizeof(ID) - 1)];
   }  
-  return tmp_s;
+  return make;
 }
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd){ // Main
@@ -95,10 +95,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
       srand((unsigned)time(0));
       wofstream fileout("UserInfo.txt", ios::out);
-      char* ID = new char[gen_random(20).length() + 1];
+      char* ID = new char[makeID(20).length() + 1];
       if(fileout.is_open()){
-        for(int i = 0; i < gen_random(20).length(); i++)
-          ID[i] = gen_random(20)[i];
+        for(int i = 0; i < makeID(20).length(); i++)
+          ID[i] = makeID(20)[i];
         for(int i = 0; ID[i] != 0; i++)
           fileout.put(ID[i]);
         fileout.close();
