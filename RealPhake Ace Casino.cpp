@@ -18,15 +18,16 @@ LRESULT CALLBACK FTUSproc     (HWND, UINT, WPARAM, LPARAM);
 HBITMAP hMainBG, hMemberBG, hFTUSbg;          // Bitmap backgrounds
 HMENU   hMenu, hTutorialMenu;                 // Menus
 HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
-        hFirstname, hLastname, hMx, hID,      // Saveable Text
+        hMx, hFirstname, hLastname, hID,      // Saveable Text
         hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
 
 int alreadyOpen = 0; // The thing that prevents you opening more than one menu
 
 wstring line;
-wchar_t userFirstname[50] = L"Testname";
-wchar_t userLastname[50]  = L"Lastname";
-wchar_t userMx[5]         = L"Mx.";
+
+wchar_t userMx[5];
+wchar_t userFirstname[50];
+wchar_t userLastname[50];
 
 // To do: Dialogue and pronouns(?)
 
@@ -301,9 +302,9 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
       // Controls
       LRESULTifstream();
       CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
-      hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
-      hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
-      hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hMx        = CreateWindowW(L"EDIT", L"Mx.", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
+      hFirstname = CreateWindowW(L"EDIT", L"Norysell", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hLastname  = CreateWindowW(L"EDIT", L"Gogetta", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
       break;
 
     case WM_COMMAND:
