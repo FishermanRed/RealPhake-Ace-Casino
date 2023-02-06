@@ -24,9 +24,9 @@ HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
 int alreadyOpen = 0; // The thing that prevents you opening more than one menu
 
 wstring line;
-wchar_t userFirstname[50] = L"Testname";
-wchar_t userLastname[50]  = L"Lastname";
-wchar_t userMx[5]         = L"Mx.";
+wchar_t userFirstname[50];
+wchar_t userLastname[50];
+wchar_t userMx[5];
 
 // To do: Dialogue and pronouns(?)
 
@@ -36,6 +36,18 @@ void LRESULTifstream(){
     getline(filein, line);
   }
   filein.close();
+}
+
+void writeUserInfo() { // To do: FIX THIS!! YOU'RE CLOSE!!
+  //GetWindowTextW(hMx, userMx, 5);
+  //wofstream fileout("UserInfo.txt", ios::out);
+  //string Mx;
+  //Mx.reserve(5);
+  //if (fileout.is_open()) {
+  //  for (int i = 0; i < Mx(20).length(); i++)
+  //  fileout.put(userMx[i]);
+  //}
+  //fileout.close();
 }
 
 string makeID(const int len){ // The thing that makes the user's unique ID
@@ -96,10 +108,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       srand((unsigned)time(0));
       wofstream fileout("UserInfo.txt", ios::out);
       char* ID = new char[makeID(20).length() + 1];
-      if(fileout.is_open()){
-        for(int i = 0; i < makeID(20).length(); i++)
+      if (fileout.is_open()) {
+        for (int i = 0; i < makeID(20).length(); i++)
           ID[i] = makeID(20)[i];
-        for(int i = 0; ID[i] != 0; i++)
+        for (int i = 0; ID[i] != 0; i++)
           fileout.put(ID[i]);
         fileout.close();
       }
@@ -236,6 +248,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       break;
 
     case WM_DESTROY:
+      //writeUserInfo();
+      MessageBox(hWnd, userMx, L"BRUH", MB_OK);
       PostQuitMessage(0);
       break;
 
@@ -301,9 +315,9 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
       // Controls
       LRESULTifstream();
       CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
-      hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
-      hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
-      hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hMx        = CreateWindowW(L"EDIT", L"Mx.", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
+      hFirstname = CreateWindowW(L"EDIT", L"Testname", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hLastname  = CreateWindowW(L"EDIT", L"Lastname", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
       break;
 
     case WM_COMMAND:
