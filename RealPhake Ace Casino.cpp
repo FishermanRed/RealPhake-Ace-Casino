@@ -39,12 +39,12 @@ void LRESULTifstream(){
   filein.close();
 }
 
-void writeUserInfo() { // To do: FIX THIS!! YOU'RE CLOSE!!
+void writeUserInfo(){ // To do: FIX THIS!! YOU'RE CLOSE!!
   //GetWindowTextW(hMx, userMx, 5);
   //wofstream fileout("UserInfo.txt", ios::out);
   //string Mx;
   //Mx.reserve(5);
-  //if (fileout.is_open()) {
+  //if (fileout.is_open()){
   //  for (int i = 0; i < Mx(20).length(); i++)
   //  fileout.put(userMx[i]);
   //}
@@ -109,7 +109,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       srand((unsigned)time(0));
       wofstream fileout("UserInfo.txt", ios::out);
       char* ID = new char[makeID(20).length() + 1];
-      if (fileout.is_open()) {
+      if (fileout.is_open()){
         for (int i = 0; i < makeID(20).length(); i++)
           ID[i] = makeID(20)[i];
         for (int i = 0; ID[i] != 0; i++)
