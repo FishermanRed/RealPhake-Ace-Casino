@@ -21,11 +21,11 @@ HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
         hMx, hFirstname, hLastname, hID,      // Saveable Text
         hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
 
-int alreadyOpen = 0; // The thing that prevents you opening more than one menu
+int alreadyOpen = 0; // The function that prevents you opening more than one menu
 
-wstring line;
+wstring userID;
 
-wchar_t userMx[5];
+wchar_t userMx[50];
 wchar_t userFirstname[50];
 wchar_t userLastname[50];
 
@@ -34,21 +34,17 @@ wchar_t userLastname[50];
 void LRESULTifstream(){
   wifstream filein("UserInfo.txt", ios::in);
   if(filein.is_open()){
-    getline(filein, line);
+    getline(filein, userID);
   }
   filein.close();
 }
 
-void writeUserInfo(){ // To do: FIX THIS!! YOU'RE CLOSE!!
-  //GetWindowTextW(hMx, userMx, 5);
-  //wofstream fileout("UserInfo.txt", ios::out);
-  //string Mx;
-  //Mx.reserve(5);
-  //if (fileout.is_open()){
-  //  for (int i = 0; i < Mx(20).length(); i++)
-  //  fileout.put(userMx[i]);
-  //}
-  //fileout.close();
+void writeUserInfo(){ // The function that writes all the user info into individual lines in userinfo.txt
+  wofstream fileout("UserInfo.txt", ios::out);
+  if (fileout.is_open()){
+    fileout<<userID<<endl<<userMx<<endl<<userFirstname<<endl<<userLastname;
+  }
+  fileout.close();
 }
 
 string makeID(const int len){ // The thing that makes the user's unique ID
@@ -103,8 +99,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   // First Time User Setup function. If user exists, makes the main window
   wifstream filein("UserInfo.txt", ios::in);
   if(filein.is_open()){
-    getline(filein, line);
-    if(line.empty()){
+    getline(filein, userID);
+    if(userID.empty()){
       MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
       srand((unsigned)time(0));
       wofstream fileout("UserInfo.txt", ios::out);
@@ -117,7 +113,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         fileout.close();
       }
       hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
-    } else hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+    }
+    else{
+      hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+      // To do: put the thing that puts the lines from userinfo.txt into the strings here!
+    }
     filein.close();
   }
 
@@ -249,8 +249,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       break;
 
     case WM_DESTROY:
-      //writeUserInfo();
-      MessageBox(hWnd, userMx, L"BRUH", MB_OK);
+      writeUserInfo();
       PostQuitMessage(0);
       break;
 
@@ -273,8 +272,8 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
       CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)2, NULL, NULL);
 
       // Controls
-      CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
-      CreateWindowW(L"STATIC", L"Testing!!!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
+      CreateWindowW(L"STATIC", userID.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
+      CreateWindowW(L"STATIC", L"Testing!!!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL); // To do: Timestamp
       hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
       hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
       hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
@@ -283,8 +282,7 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
     case WM_COMMAND:
       switch(wp){
         case 1:
-          // To do: Fully implemented save function
-          GetWindowTextW(hMx, userMx, 5);
+          GetWindowTextW(hMx, userMx, 50);
           GetWindowTextW(hFirstname, userFirstname, 50);
           GetWindowTextW(hLastname, userLastname, 50);
           break;
@@ -315,7 +313,7 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
 
       // Controls
       LRESULTifstream();
-      CreateWindowW(L"STATIC", line.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
+      CreateWindowW(L"STATIC", userID.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
       hMx        = CreateWindowW(L"EDIT", L"Mx.", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
       hFirstname = CreateWindowW(L"EDIT", L"Norysell", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
       hLastname  = CreateWindowW(L"EDIT", L"Gogetta", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
@@ -323,8 +321,8 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
 
     case WM_COMMAND:
       switch(wp){
-        case 1: //To do: Functioning namesave
-          GetWindowTextW(hMx, userMx, 5);
+        case 1:
+          GetWindowTextW(hMx, userMx, 50);
           GetWindowTextW(hFirstname, userFirstname, 50);
           GetWindowTextW(hLastname, userLastname, 50);
           ShowWindow(hWnd, 0);
