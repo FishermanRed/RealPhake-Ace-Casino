@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <chrono>
+#include <ctime>
 
 #include "menutext.h"
 
@@ -23,9 +25,15 @@ HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
 
 int alreadyOpen = 0; // The function that prevents you opening more than one menu
 
+// Strings containing the user info
 wstring userID;
+wstring userJoinDateString;
+wstring userMxString;
+wstring userFirstnameString;
+wstring userLastnameString;
 
-wchar_t userMx[50];
+wchar_t userJoinDate[10];
+wchar_t userMx[5];
 wchar_t userFirstname[50];
 wchar_t userLastname[50];
 
@@ -42,15 +50,15 @@ void LRESULTifstream(){
 void writeUserInfo(){ // The function that writes all the user info into individual lines in userinfo.txt
   wofstream fileout("UserInfo.txt", ios::out);
   if (fileout.is_open()){
-    fileout<<userID<<endl<<userMx<<endl<<userFirstname<<endl<<userLastname;
+    fileout<<userID<<endl<<userJoinDate<<endl<<userMx<<endl<<userFirstname<<endl<<userLastname;
   }
   fileout.close();
 }
 
-string makeID(const int len){ // The thing that makes the user's unique ID
+string makeID(const int len){ // The function that makes the user's unique ID
   static const char ID[] =
     "0123456789987654321001234567899876543210"
-    "BCDFGHJKLMNPRSTVWXYZ";
+    "BCDFGHJKLMNPRSTVWXY";
   string make;
   make.reserve(21);
   for (int i = 0; i < 21; ++i){
@@ -108,7 +116,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       if (fileout.is_open()){
         for (int i = 0; i < makeID(20).length(); i++)
           ID[i] = makeID(20)[i];
-        for (int i = 0; ID[i] != 0; i++)
+        for (int i = 0; ID[i-1] != 0; i++) // To do: Fix mystery 22nd character??
           fileout.put(ID[i]);
         fileout.close();
       }
@@ -116,7 +124,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     }
     else{
       hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
-      // To do: put the thing that puts the lines from userinfo.txt into the strings here!
+      // Location of the copy-from-strings from userinfo.txt
+      // To do: Achievements
+      getline(filein, userJoinDateString);
+      userJoinDateString.copy(userJoinDate, 10, 0);
+      getline(filein, userMxString);
+      userMxString.copy(userMx, 5, 0);
+      getline(filein, userFirstnameString);
+      userFirstnameString.copy(userFirstname, 50, 0);
+      getline(filein, userLastnameString);
+      userLastnameString.copy(userLastname, 50, 0);
     }
     filein.close();
   }
@@ -273,7 +290,7 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
 
       // Controls
       CreateWindowW(L"STATIC", userID.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
-      CreateWindowW(L"STATIC", L"Testing!!!", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL); // To do: Timestamp
+      CreateWindowW(L"STATIC", userJoinDate, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL); // To do: Timestamp
       hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
       hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
       hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
@@ -282,7 +299,7 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
     case WM_COMMAND:
       switch(wp){
         case 1:
-          GetWindowTextW(hMx, userMx, 50);
+          GetWindowTextW(hMx, userMx, 5);
           GetWindowTextW(hFirstname, userFirstname, 50);
           GetWindowTextW(hLastname, userLastname, 50);
           break;
@@ -313,16 +330,18 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
 
       // Controls
       LRESULTifstream();
+      userID.insert(userID.begin() + 7, '-');
+      userID.insert(userID.begin() + 15, '-');
       CreateWindowW(L"STATIC", userID.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
       hMx        = CreateWindowW(L"EDIT", L"Mx.", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
-      hFirstname = CreateWindowW(L"EDIT", L"Norysell", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
+      hFirstname = CreateWindowW(L"EDIT", L"Taylor", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
       hLastname  = CreateWindowW(L"EDIT", L"Gogetta", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
       break;
 
     case WM_COMMAND:
       switch(wp){
         case 1:
-          GetWindowTextW(hMx, userMx, 50);
+          GetWindowTextW(hMx, userMx, 5);
           GetWindowTextW(hFirstname, userFirstname, 50);
           GetWindowTextW(hLastname, userLastname, 50);
           ShowWindow(hWnd, 0);
