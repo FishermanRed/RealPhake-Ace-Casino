@@ -20,7 +20,7 @@ LRESULT CALLBACK FTUSproc     (HWND, UINT, WPARAM, LPARAM);
 HBITMAP hMainBG, hMemberBG, hFTUSbg;          // Bitmap backgrounds
 HMENU   hMenu, hTutorialMenu;                 // Menus
 HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
-        hMx, hFirstname, hLastname, hID,      // Saveable Text
+        hMx, hFirstname, hLastname,           // Saveable Text
         hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
 
 int alreadyOpen = 0; // The function that prevents you opening more than one menu
@@ -43,6 +43,7 @@ void LRESULTifstream(){
   wifstream filein("UserInfo.txt", ios::in);
   if(filein.is_open()){
     getline(filein, userID);
+    getline(filein, userJoinDateString);
   }
   filein.close();
 }
@@ -116,8 +117,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       if (fileout.is_open()){
         for (int i = 0; i < makeID(20).length(); i++)
           ID[i] = makeID(20)[i];
-        for (int i = 0; ID[i-1] != 0; i++) // To do: Fix mystery 22nd character??
+        for (int i = 0; ID[i - 1] != 0; i++) // To do: Fix mystery 22nd character??
           fileout.put(ID[i]);
+        fileout<<"TEST";
         fileout.close();
       }
       hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
