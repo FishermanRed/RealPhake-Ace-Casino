@@ -50,7 +50,7 @@ void LRESULTifstream(){
 
 void writeUserInfo(){ // The function that writes all the user info into individual lines in userinfo.txt
   wofstream fileout("UserInfo.txt", ios::out);
-  if (fileout.is_open()){
+  if(fileout.is_open()){
     fileout<<userID<<endl<<userJoinDate<<endl<<userMx<<endl<<userFirstname<<endl<<userLastname;
   }
   fileout.close();
@@ -62,7 +62,7 @@ string makeID(const int len){ // The function that makes the user's unique ID
     "BCDFGHJKLMNPRSTVWXY";
   string make;
   make.reserve(21);
-  for (int i = 0; i < 21; ++i){
+  for(int i = 0; i < 21; ++i){
     make += ID[rand() % (sizeof(ID) - 1)];
   }  
   return make;
