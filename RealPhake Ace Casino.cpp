@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <chrono>
 #include <ctime>
 
 #include "menutext.h"
@@ -32,12 +31,52 @@ wstring userMxString;
 wstring userFirstnameString;
 wstring userLastnameString;
 
-wchar_t userJoinDate[10];
+wchar_t userJoinDate[11];
 wchar_t userMx[5];
 wchar_t userFirstname[50];
 wchar_t userLastname[50];
 
 // To do: Dialogue and pronouns(?)
+
+void makeTimestamp(){
+  time_t today;
+  time(&today);
+  //string timestamp1 = "Wed Dec  3 18:28:15 2023"; // Test date
+  string timestamp1 = ctime(&today);
+  string timestamp2;
+  timestamp2.append(timestamp1, 4, 3);
+  timestamp2.append(timestamp1, 8, 2);
+  timestamp2.append(timestamp1, 20, 5);
+  timestamp2.insert(timestamp2.begin() + 3, '/');
+  timestamp2.insert(timestamp2.begin() + 6, '/');
+  size_t space = timestamp2.find(" ");
+  size_t jan = timestamp2.find("Jan");
+  size_t feb = timestamp2.find("Feb");
+  size_t mar = timestamp2.find("Mar");
+  size_t apr = timestamp2.find("Apr");
+  size_t may = timestamp2.find("May");
+  size_t jun = timestamp2.find("Jun");
+  size_t jul = timestamp2.find("Jul");
+  size_t aug = timestamp2.find("Aug");
+  size_t sep = timestamp2.find("Sep");
+  size_t oct = timestamp2.find("Oct");
+  size_t nov = timestamp2.find("Nov");
+  size_t dec = timestamp2.find("Dec");
+  if(space != string::npos){timestamp2.replace(4, 0, "0");  timestamp2.erase(timestamp2.begin() + 5);}
+  if(jan   != string::npos){timestamp2.replace(0, 2, "01"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(feb   != string::npos){timestamp2.replace(0, 2, "02"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(mar   != string::npos){timestamp2.replace(0, 2, "03"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(apr   != string::npos){timestamp2.replace(0, 2, "04"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(may   != string::npos){timestamp2.replace(0, 2, "05"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(jun   != string::npos){timestamp2.replace(0, 2, "06"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(jul   != string::npos){timestamp2.replace(0, 2, "07"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(aug   != string::npos){timestamp2.replace(0, 2, "08"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(sep   != string::npos){timestamp2.replace(0, 2, "09"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(oct   != string::npos){timestamp2.replace(0, 2, "10"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(nov   != string::npos){timestamp2.replace(0, 2, "11"); timestamp2.erase(timestamp2.begin() + 2);}
+  if(dec   != string::npos){timestamp2.replace(0, 2, "12"); timestamp2.erase(timestamp2.begin() + 2);}
+  // To do: find out how to put timestamp2 into userJoinDate or userJoinDateString whatever's easier. makeTimestamp is verified to work in cmd
+}
 
 void LRESULTifstream(){
   wifstream filein("UserInfo.txt", ios::in);
@@ -61,7 +100,6 @@ string makeID(const int len){ // The function that makes the user's unique ID
     "0123456789987654321001234567899876543210"
     "BCDFGHJKLMNPRSTVWXY";
   string make;
-  make.reserve(21);
   for(int i = 0; i < 21; ++i){
     make += ID[rand() % (sizeof(ID) - 1)];
   }  
@@ -111,15 +149,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     getline(filein, userID);
     if(userID.empty()){
       MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
-      srand((unsigned)time(0));
+      srand((unsigned)time(NULL));
       wofstream fileout("UserInfo.txt", ios::out);
       char* ID = new char[makeID(20).length() + 1];
-      if (fileout.is_open()){
-        for (int i = 0; i < makeID(20).length(); i++)
+      if(fileout.is_open()){
+        for(int i = 0; i < makeID(20).length(); i++)
           ID[i] = makeID(20)[i];
-        for (int i = 0; ID[i - 1] != 0; i++) // To do: Fix mystery 22nd character??
+        for(int i = 0; ID[i - 1] != 0; i++) // To do: Fix mystery 22nd character??
           fileout.put(ID[i]);
-        fileout<<"TEST";
         fileout.close();
       }
       hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
@@ -193,7 +230,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       switch(wp){
         // Make User Info window
         case 1:
-          if (alreadyOpen == 0){
+          if(alreadyOpen == 0){
             hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 615, 300, 691, 439, hMainWnd, NULL, NULL, NULL);
             //ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
             alreadyOpen ++;
@@ -332,7 +369,8 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
 
       // Controls
       LRESULTifstream();
-      userID.insert(userID.begin() + 7, '-');
+      makeTimestamp();
+      userID.insert(userID.begin() +  7, '-');
       userID.insert(userID.begin() + 15, '-');
       CreateWindowW(L"STATIC", userID.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
       hMx        = CreateWindowW(L"EDIT", L"Mx.", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
