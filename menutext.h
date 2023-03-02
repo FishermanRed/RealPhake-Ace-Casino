@@ -4,7 +4,7 @@
 
 #define WELCOMETEXT L"This is gonna be dummy text again for now because first draft was cringe and it was bothering me"
 
-#define ABOUT_MENUTEXT L"\t\t            ♠         ♡         ♣         ♢\n\t\t            RealPhake Ace Casino\n\t\t                     Version 1.0\n\t\t            ♤         ♥         ♧         ♦\n\nRealPhake Ace Casino is a personal project made by Red K.\n\nI have not copyrighted anything and I don't plan on charging anyone for this game, so if you paid money for this, I'm sorry but you got ripped off. Everything in this program falls under fair use; no copyrighted material contained in this program belongs to me in any way, it's just for fun and I am not making money off of it.\n\nSpecial Thanks to Professor Seth Reed and The Pentamollis Project.\n\nFeel free to contact me through Discord:\nRed#0681"
+#define ABOUT_MENUTEXT L"\t\t            ♠         ♡         ♣         ♢\n\t\t            RealPhake Ace Casino\n\t\t                     Version 1.0\n\t\t            ♤         ♥         ♧         ♦\n\nRealPhake Ace Casino is a personal project made by Mage K.\n\nI have not copyrighted anything and I don't plan on charging anyone for this game, so if you paid money for this, I'm sorry but you got ripped off. Everything in this program falls under fair use; no copyrighted material contained in this program belongs to me in any way, it's just for fun and I am not making money off of it.\n\nSpecial Thanks to Professor Seth Reed and The Pentamollis Project.\n\nFeel free to contact me through Discord:\nRed#0681"
 
 #define RPAC_MENUTEXT L"bruh"
 

@@ -35,6 +35,7 @@ wchar_t userJoinDate[10];
 wchar_t userMx[5];
 wchar_t userFirstname[50];
 wchar_t userLastname[50];
+
 // To do: Dialogue and pronouns(?)
 
 void makeTimestamp(){
@@ -79,7 +80,7 @@ void makeTimestamp(){
   }
   filein.close();
 
-  userID.insert(userID.begin() +  7, '-');
+  userID.insert(userID.begin() + 7,  '-');
   userID.insert(userID.begin() + 15, '-');
 }
 
@@ -98,7 +99,7 @@ string makeID(const int len){ // The function that makes the user's unique ID
   string make;
   for(int i = 0; i < 21; ++i){
     make += ID[rand() % (sizeof(ID) - 1)];
-  }  
+  }
   return make;
 }
 
@@ -147,10 +148,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
       srand((unsigned)time(NULL));
       wofstream fileout("UserInfo.txt", ios::out);
-      char* ID = new char[makeID(20).length() + 1];
+      char* ID = new char[makeID(21).length()];
       if(fileout.is_open()){
-        for(int i = 0; i < makeID(20).length(); i++)
-          ID[i] = makeID(20)[i];
+        for(int i = 0; i < makeID(21).length(); i++)
+          ID[i] = makeID(21)[i];
         fileout<<ID;
         fileout.close();
       }
@@ -189,12 +190,12 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       // Bitmap shit(map)
       hMainBG = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\testimage2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
       hMainBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
-      SendMessageW(hMainBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hMainBG);
+      SendMessageW(hMainBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hMainBG);
 
       // Main window menu bar
       AppendMenu(hMenu, MF_STRING, 1, L"User Info");
       AppendMenu(hMenu, MF_STRING, 2, L"Card Skins");
-      AppendMenu(hMenu, MF_POPUP,  (UINT_PTR)hTutorialMenu, L"How to Play");
+      AppendMenu(hMenu, MF_POPUP,  (UINT_PTR) hTutorialMenu, L"How to Play");
       AppendMenu(hMenu, MF_STRING, 11, L"About");
       AppendMenu(hMenu, MF_STRING, 12, L"❡"); // To do: dynamic phake counter
 
@@ -212,13 +213,13 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       SetMenu(hWnd, hMenu);
 
       // Buttons
-      CreateWindow(L"BUTTON", L"Play Poker!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU)13, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Play Blackjack!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 182, 300, 125, 25, hWnd, (HMENU)14, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Play Tycoon!",    WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 317, 300, 125, 25, hWnd, (HMENU)15, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Play War!",       WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 452, 300, 125, 25, hWnd, (HMENU)16, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Play Roulette!",  WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 115, 335, 125, 25, hWnd, (HMENU)17, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Play Craps!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 250, 335, 124, 25, hWnd, (HMENU)18, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Play Slots!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 384, 335, 125, 25, hWnd, (HMENU)19, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Poker!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU) 13, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Blackjack!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 182, 300, 125, 25, hWnd, (HMENU) 14, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Tycoon!",    WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 317, 300, 125, 25, hWnd, (HMENU) 15, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play War!",       WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 452, 300, 125, 25, hWnd, (HMENU) 16, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Roulette!",  WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 115, 335, 125, 25, hWnd, (HMENU) 17, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Craps!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 250, 335, 124, 25, hWnd, (HMENU) 18, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Slots!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 384, 335, 125, 25, hWnd, (HMENU) 19, NULL, NULL);
       break;
 
     case WM_COMMAND:
@@ -319,12 +320,12 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
       SendMessageW(hMemberBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hMemberBG);
       
       // Buttons
-      CreateWindow(L"BUTTON", L"Save", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 555, 345, 50, 25, hWnd, (HMENU)1, NULL, NULL);
-      CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)2, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Save", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 555, 345, 50, 25, hWnd, (HMENU) 1, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU) 2, NULL, NULL);
 
       // Controls
       CreateWindowW(L"STATIC", userID.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 304, 231, 20, hWnd, NULL, NULL, NULL);
-      CreateWindowW(L"STATIC", userJoinDate, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL); // To do: Timestamp
+      CreateWindowW(L"STATIC", userJoinDate, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 354, 231, 20, hWnd, NULL, NULL, NULL);
       hMx        = CreateWindowW(L"EDIT", userMx, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 37, 250, 35, 20, hWnd, NULL, NULL, NULL);
       hFirstname = CreateWindowW(L"EDIT", userFirstname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 74, 250, 96, 20, hWnd, NULL, NULL, NULL);
       hLastname  = CreateWindowW(L"EDIT", userLastname, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 172, 250, 96, 20, hWnd, NULL, NULL, NULL);
@@ -360,7 +361,7 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
       // Bitmap shit(map)
 
       // Buttons
-      CreateWindow(L"BUTTON", L"Register!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 475, 345, 75, 25, hWnd, (HMENU)1, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Register!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 475, 345, 75, 25, hWnd, (HMENU) 1, NULL, NULL);
 
       // Controls
       makeTimestamp();
