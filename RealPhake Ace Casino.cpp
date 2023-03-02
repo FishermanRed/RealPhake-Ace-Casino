@@ -34,7 +34,7 @@ wchar_t userLastname[50];
 
 // To do: Dialogue and pronouns(?)
 
-void makeTimestamp(){
+void makeTimestamp(){ // Function that makes the join timestamp and fixes the ID during FTUS
   time_t today;
   time(&today);
   string timeGrab = ctime(&today);
@@ -210,7 +210,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       AppendMenu(hMenu, MF_STRING, 2, L"Card Skins");
       AppendMenu(hMenu, MF_POPUP,  (UINT_PTR) hTutorialMenu, L"How to Play");
       AppendMenu(hMenu, MF_STRING, 11, L"About");
-      AppendMenu(hMenu, MF_STRING, 12, L"❡"); // To do: dynamic phake counter ❡
+      AppendMenu(hMenu, MF_STRING, 12, L"❡"); // To do: dynamic phake counter
 
       // Tutorial options
       AppendMenu(hTutorialMenu, MF_STRING, 3,  L"How to Play: RealPhake Ace Casino");
