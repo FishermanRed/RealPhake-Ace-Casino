@@ -25,13 +25,9 @@ HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
 int alreadyOpen = 0; // The function that prevents you opening more than one menu
 
 // Strings containing the user info
-wstring userID;
-wstring userJoinDateString;
-wstring userMxString;
-wstring userFirstnameString;
-wstring userLastnameString;
+wstring userID, userJoinDateString, userMxString, userFirstnameString, userLastnameString;
 
-wchar_t userJoinDate[10];
+wchar_t userJoinDate[50];
 wchar_t userMx[5];
 wchar_t userFirstname[50];
 wchar_t userLastname[50];
@@ -45,22 +41,38 @@ void makeTimestamp(){
   string timestamp;
   timestamp.append(timeGrab, 4, 3);
   timestamp.append(timeGrab, 8, 2);
-  timestamp.append(timeGrab, 20, 5);
-  timestamp.insert(timestamp.begin() + 3, '/');
-  timestamp.insert(timestamp.begin() + 6, '/');
-  size_t spc = timestamp.find(' ');   if(spc != string::npos){timestamp.replace(4, 0, "0");  timestamp.erase(timestamp.begin() + 5);}
-  size_t jan = timestamp.find("Jan"); if(jan != string::npos){timestamp.replace(0, 2, "01"); timestamp.erase(timestamp.begin() + 2);}
-  size_t feb = timestamp.find("Feb"); if(feb != string::npos){timestamp.replace(0, 2, "02"); timestamp.erase(timestamp.begin() + 2);}
-  size_t mar = timestamp.find("Mar"); if(mar != string::npos){timestamp.replace(0, 2, "03"); timestamp.erase(timestamp.begin() + 2);}
-  size_t apr = timestamp.find("Apr"); if(apr != string::npos){timestamp.replace(0, 2, "04"); timestamp.erase(timestamp.begin() + 2);}
-  size_t may = timestamp.find("May"); if(may != string::npos){timestamp.replace(0, 2, "05"); timestamp.erase(timestamp.begin() + 2);}
-  size_t jun = timestamp.find("Jun"); if(jun != string::npos){timestamp.replace(0, 2, "06"); timestamp.erase(timestamp.begin() + 2);}
-  size_t jul = timestamp.find("Jul"); if(jul != string::npos){timestamp.replace(0, 2, "07"); timestamp.erase(timestamp.begin() + 2);}
-  size_t aug = timestamp.find("Aug"); if(aug != string::npos){timestamp.replace(0, 2, "08"); timestamp.erase(timestamp.begin() + 2);}
-  size_t sep = timestamp.find("Sep"); if(sep != string::npos){timestamp.replace(0, 2, "09"); timestamp.erase(timestamp.begin() + 2);}
-  size_t oct = timestamp.find("Oct"); if(oct != string::npos){timestamp.replace(0, 2, "10"); timestamp.erase(timestamp.begin() + 2);}
-  size_t nov = timestamp.find("Nov"); if(nov != string::npos){timestamp.replace(0, 2, "11"); timestamp.erase(timestamp.begin() + 2);}
-  size_t dec = timestamp.find("Dec"); if(dec != string::npos){timestamp.replace(0, 2, "12"); timestamp.erase(timestamp.begin() + 2);}
+  timestamp.append(timeGrab, 20, 4);
+  timestamp.insert(3, "/");
+  timestamp.insert(6, "/");
+  size_t spc = timestamp.find(' ');   if(spc != string::npos){timestamp.replace(4, 0, "0");  timestamp.erase(5, 1);}
+  size_t jan = timestamp.find("Jan"); if(jan != string::npos){timestamp.replace(0, 2, "01"); timestamp.erase(2, 1);}
+  size_t feb = timestamp.find("Feb"); if(feb != string::npos){timestamp.replace(0, 2, "02"); timestamp.erase(2, 1);}
+  size_t mar = timestamp.find("Mar"); if(mar != string::npos){timestamp.replace(0, 2, "03"); timestamp.erase(2, 1);}
+  size_t apr = timestamp.find("Apr"); if(apr != string::npos){timestamp.replace(0, 2, "04"); timestamp.erase(2, 1);}
+  size_t may = timestamp.find("May"); if(may != string::npos){timestamp.replace(0, 2, "05"); timestamp.erase(2, 1);}
+  size_t jun = timestamp.find("Jun"); if(jun != string::npos){timestamp.replace(0, 2, "06"); timestamp.erase(2, 1);}
+  size_t jul = timestamp.find("Jul"); if(jul != string::npos){timestamp.replace(0, 2, "07"); timestamp.erase(2, 1);}
+  size_t aug = timestamp.find("Aug"); if(aug != string::npos){timestamp.replace(0, 2, "08"); timestamp.erase(2, 1);}
+  size_t sep = timestamp.find("Sep"); if(sep != string::npos){timestamp.replace(0, 2, "09"); timestamp.erase(2, 1);}
+  size_t oct = timestamp.find("Oct"); if(oct != string::npos){timestamp.replace(0, 2, "10"); timestamp.erase(2, 1);}
+  size_t nov = timestamp.find("Nov"); if(nov != string::npos){timestamp.replace(0, 2, "11"); timestamp.erase(2, 1);}
+  size_t dec = timestamp.find("Dec"); if(dec != string::npos){timestamp.replace(0, 2, "12"); timestamp.erase(2, 1);}
+  timestamp.append(" at ");
+  timestamp.append(timeGrab, 11, 5);
+  size_t noo = timestamp.find("12:"); if(noo != string::npos){timestamp += " PM";}
+  size_t one = timestamp.find("13:"); if(one != string::npos){timestamp.replace(14, 2, "1");  timestamp += " PM";}
+  size_t two = timestamp.find("14:"); if(two != string::npos){timestamp.replace(14, 2, "2");  timestamp += " PM";}
+  size_t thr = timestamp.find("15:"); if(thr != string::npos){timestamp.replace(14, 2, "3");  timestamp += " PM";}
+  size_t fou = timestamp.find("16:"); if(fou != string::npos){timestamp.replace(14, 2, "4");  timestamp += " PM";}
+  size_t fiv = timestamp.find("17:"); if(fiv != string::npos){timestamp.replace(14, 2, "5");  timestamp += " PM";}
+  size_t six = timestamp.find("18:"); if(six != string::npos){timestamp.replace(14, 2, "6");  timestamp += " PM";}
+  size_t sev = timestamp.find("19:"); if(sev != string::npos){timestamp.replace(14, 2, "7");  timestamp += " PM";}
+  size_t eig = timestamp.find("20:"); if(eig != string::npos){timestamp.replace(14, 2, "8");  timestamp += " PM";}
+  size_t nin = timestamp.find("21:"); if(nin != string::npos){timestamp.replace(14, 2, "9");  timestamp += " PM";}
+  size_t ten = timestamp.find("22:"); if(ten != string::npos){timestamp.replace(14, 2, "10"); timestamp += " PM";}
+  size_t ele = timestamp.find("23:"); if(ele != string::npos){timestamp.replace(14, 2, "11"); timestamp += " PM";}
+  size_t mid = timestamp.find("24:"); if(mid != string::npos){timestamp.replace(14, 2, " 12");}
+  size_t aop = timestamp.find(" PM"); if(aop == string::npos){timestamp += " AM"; timestamp.erase(14, 1);}
 
   wifstream filein("UserInfo.txt", ios::in);
   if(filein.is_open()){
@@ -82,6 +94,7 @@ void makeTimestamp(){
 
   userID.insert(userID.begin() + 7,  '-');
   userID.insert(userID.begin() + 15, '-');
+  userID.resize(23);
 }
 
 void writeUserInfo(){ // The function that writes all the user info into individual lines in userinfo.txt
@@ -97,7 +110,7 @@ string makeID(const int len){ // The function that makes the user's unique ID
     "0123456789987654321001234567899876543210"
     "BCDFGHJKLMNPRSTVWXY";
   string make;
-  for(int i = 0; i < 21; ++i){
+  for(int i = 0; i < 25; ++i){
     make += ID[rand() % (sizeof(ID) - 1)];
   }
   return make;
@@ -148,10 +161,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       MessageBox(hMainWnd, WELCOMETEXT, L"Welcome to RealPhake Ace Casino!", MB_OK);
       srand((unsigned)time(NULL));
       wofstream fileout("UserInfo.txt", ios::out);
-      char* ID = new char[makeID(21).length()];
+      char* ID = new char[makeID(25).length()];
       if(fileout.is_open()){
-        for(int i = 0; i < makeID(21).length(); i++)
-          ID[i - 1] = makeID(21)[i];
+        for(int i = 0; i < makeID(25).length(); i++)
+          ID[i - 1] = makeID(25)[i];
         fileout<<ID;
         fileout.close();
       }
@@ -162,7 +175,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       // Location of the copy-from-strings from userinfo.txt
       // To do: Achievements
       getline(filein, userJoinDateString);
-      userJoinDateString.copy(userJoinDate, 10, 0);
+      userJoinDateString.copy(userJoinDate, 50, 0);
       getline(filein, userMxString);
       userMxString.copy(userMx, 5, 0);
       getline(filein, userFirstnameString);
@@ -197,7 +210,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       AppendMenu(hMenu, MF_STRING, 2, L"Card Skins");
       AppendMenu(hMenu, MF_POPUP,  (UINT_PTR) hTutorialMenu, L"How to Play");
       AppendMenu(hMenu, MF_STRING, 11, L"About");
-      AppendMenu(hMenu, MF_STRING, 12, L"❡"); // To do: dynamic phake counter
+      AppendMenu(hMenu, MF_STRING, 12, L"❡"); // To do: dynamic phake counter ❡
 
       // Tutorial options
       AppendMenu(hTutorialMenu, MF_STRING, 3,  L"How to Play: RealPhake Ace Casino");
@@ -374,7 +387,7 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
     case WM_COMMAND:
       switch(wp){
         case 1:
-          userJoinDateString.copy(userJoinDate, 10, 0);
+          userJoinDateString.copy(userJoinDate, 50, 0);
           GetWindowTextW(hMx, userMx, 5);
           GetWindowTextW(hFirstname, userFirstname, 50);
           GetWindowTextW(hLastname, userLastname, 50);
