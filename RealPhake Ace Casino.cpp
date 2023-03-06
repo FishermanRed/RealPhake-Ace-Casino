@@ -25,6 +25,7 @@ HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
 int alreadyOpen = 0; // The function that prevents you opening more than one menu
 
 // Strings containing the user info
+string phakeCount;
 wstring userID, userJoinDateString, userMxString, userFirstnameString, userLastnameString;
 
 wchar_t userJoinDate[50];
@@ -34,7 +35,7 @@ wchar_t userLastname[50];
 
 // To do: Dialogue and pronouns(?)
 
-void makeTimestamp(){ // Function that makes the join timestamp and fixes the ID during FTUS
+void makeTimestamp(){ // The function that makes the join timestamp and fixes the ID during FTUS
   time_t today;
   time(&today);
   string timeGrab = ctime(&today);
@@ -44,19 +45,20 @@ void makeTimestamp(){ // Function that makes the join timestamp and fixes the ID
   timestamp.append(timeGrab, 20, 4);
   timestamp.insert(3, "/");
   timestamp.insert(6, "/");
-  size_t spc = timestamp.find(' ');   if(spc != string::npos){timestamp.replace(4, 0, "0");  timestamp.erase(5, 1);}
-  size_t jan = timestamp.find("Jan"); if(jan != string::npos){timestamp.replace(0, 2, "01"); timestamp.erase(2, 1);}
-  size_t feb = timestamp.find("Feb"); if(feb != string::npos){timestamp.replace(0, 2, "02"); timestamp.erase(2, 1);}
-  size_t mar = timestamp.find("Mar"); if(mar != string::npos){timestamp.replace(0, 2, "03"); timestamp.erase(2, 1);}
-  size_t apr = timestamp.find("Apr"); if(apr != string::npos){timestamp.replace(0, 2, "04"); timestamp.erase(2, 1);}
-  size_t may = timestamp.find("May"); if(may != string::npos){timestamp.replace(0, 2, "05"); timestamp.erase(2, 1);}
-  size_t jun = timestamp.find("Jun"); if(jun != string::npos){timestamp.replace(0, 2, "06"); timestamp.erase(2, 1);}
-  size_t jul = timestamp.find("Jul"); if(jul != string::npos){timestamp.replace(0, 2, "07"); timestamp.erase(2, 1);}
-  size_t aug = timestamp.find("Aug"); if(aug != string::npos){timestamp.replace(0, 2, "08"); timestamp.erase(2, 1);}
-  size_t sep = timestamp.find("Sep"); if(sep != string::npos){timestamp.replace(0, 2, "09"); timestamp.erase(2, 1);}
-  size_t oct = timestamp.find("Oct"); if(oct != string::npos){timestamp.replace(0, 2, "10"); timestamp.erase(2, 1);}
-  size_t nov = timestamp.find("Nov"); if(nov != string::npos){timestamp.replace(0, 2, "11"); timestamp.erase(2, 1);}
-  size_t dec = timestamp.find("Dec"); if(dec != string::npos){timestamp.replace(0, 2, "12"); timestamp.erase(2, 1);}
+  size_t spc = timestamp.find(' ');   if(spc != string::npos){timestamp.replace(4, 0, "0" ); timestamp.erase(5, 1);}
+  size_t jan = timestamp.find("Jan"); if(jan != string::npos){timestamp.replace(0, 2, "01");}
+  size_t feb = timestamp.find("Feb"); if(feb != string::npos){timestamp.replace(0, 2, "02");}
+  size_t mar = timestamp.find("Mar"); if(mar != string::npos){timestamp.replace(0, 2, "03");}
+  size_t apr = timestamp.find("Apr"); if(apr != string::npos){timestamp.replace(0, 2, "04");}
+  size_t may = timestamp.find("May"); if(may != string::npos){timestamp.replace(0, 2, "05");}
+  size_t jun = timestamp.find("Jun"); if(jun != string::npos){timestamp.replace(0, 2, "06");}
+  size_t jul = timestamp.find("Jul"); if(jul != string::npos){timestamp.replace(0, 2, "07");}
+  size_t aug = timestamp.find("Aug"); if(aug != string::npos){timestamp.replace(0, 2, "08");}
+  size_t sep = timestamp.find("Sep"); if(sep != string::npos){timestamp.replace(0, 2, "09");}
+  size_t oct = timestamp.find("Oct"); if(oct != string::npos){timestamp.replace(0, 2, "10");}
+  size_t nov = timestamp.find("Nov"); if(nov != string::npos){timestamp.replace(0, 2, "11");}
+  size_t dec = timestamp.find("Dec"); if(dec != string::npos){timestamp.replace(0, 2, "12");}
+  timestamp.erase(2, 1);
   timestamp.append(" at ");
   timestamp.append(timeGrab, 11, 5);
   size_t noo = timestamp.find("12:"); if(noo != string::npos){timestamp += " PM";}
@@ -105,7 +107,7 @@ void writeUserInfo(){ // The function that writes all the user info into individ
   fileout.close();
 }
 
-string makeID(const int len){ // The function that makes the user's unique ID
+string makeID(const int len){ // The function that helps make the user's unique ID
   static const char ID[] =
     "0123456789987654321001234567899876543210"
     "BCDFGHJKLMNPRSTVWXY";
@@ -153,7 +155,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   if(!RegisterClassW(&ftus))
     return -1;
 
-  // First Time User Setup function. If user exists, makes the main window
+  // First Time User Setup (FTUS) function. If user exists, makes the main window
   wifstream filein("UserInfo.txt", ios::in);
   if(filein.is_open()){
     getline(filein, userID);
@@ -168,7 +170,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         fileout<<ID;
         fileout.close();
       }
-      hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+      phakeCount = 5000;
+      hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_DLGFRAME, 640, 275, 340, 479, NULL, NULL, NULL, NULL); // To do: Fix positioning & etc.
     }
     else{
       hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
@@ -210,7 +213,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       AppendMenu(hMenu, MF_STRING, 2, L"Card Skins");
       AppendMenu(hMenu, MF_POPUP,  (UINT_PTR) hTutorialMenu, L"How to Play");
       AppendMenu(hMenu, MF_STRING, 11, L"About");
-      AppendMenu(hMenu, MF_STRING, 12, L"❡"); // To do: dynamic phake counter
+      AppendMenu(hMenu, MF_STRING, 12, (LPCWSTR) phakeCount.c_str()); // To do: dynamic phake counter
 
       // Tutorial options
       AppendMenu(hTutorialMenu, MF_STRING, 3,  L"How to Play: RealPhake Ace Casino");
@@ -226,7 +229,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       SetMenu(hWnd, hMenu);
 
       // Buttons
-      CreateWindow(L"BUTTON", L"Play Poker!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU) 13, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Play Poker!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU) 13, NULL, NULL); // Note for later: HIDE/SHOW BUTTONS?????
       CreateWindow(L"BUTTON", L"Play Blackjack!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 182, 300, 125, 25, hWnd, (HMENU) 14, NULL, NULL);
       CreateWindow(L"BUTTON", L"Play Tycoon!",    WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 317, 300, 125, 25, hWnd, (HMENU) 15, NULL, NULL);
       CreateWindow(L"BUTTON", L"Play War!",       WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 452, 300, 125, 25, hWnd, (HMENU) 16, NULL, NULL);
@@ -372,9 +375,12 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
   switch(msg){
     case WM_CREATE:
       // Bitmap shit(map)
+      hFTUSbg = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a FTUS BG
+      hFTUSbgWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
+      SendMessageW(hFTUSbgWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hFTUSbg);
 
       // Buttons
-      CreateWindow(L"BUTTON", L"Register!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 475, 345, 75, 25, hWnd, (HMENU) 1, NULL, NULL);
+      CreateWindow(L"BUTTON", L"Register!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 37, 345, 75, 25, hWnd, (HMENU) 1, NULL, NULL);
 
       // Controls
       makeTimestamp();
