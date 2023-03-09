@@ -24,7 +24,8 @@ HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl,    // Windows
         hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,   // "Windows" of the BGs
         hCrdTblBGWnd;
 
-int alreadyOpen = 0; // The function that prevents you opening more than one menu
+int alreadyOpen = 0, // The function that prevents you opening more than one menu
+    unsaved;         // The function that warns the player before exiting a game
 
 // Strings containing the user info
 wstring userID, userJoinDateString, userMxString, userFirstnameString, userLastnameString;
@@ -437,7 +438,7 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
   }
   return 0;
 }
-int unsaved;
+
 LRESULT CALLBACK CardTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Card Table window interactables
   switch(msg){
     case WM_CREATE:
@@ -456,7 +457,7 @@ LRESULT CALLBACK CardTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Ca
     case WM_COMMAND:
       switch(wp){
         case 1:
-          unsaved = MessageBox(hCrdTbl, L"If you quit now, any Phake you spent will be forfeited.", L"Wait! Are you sure you want to leave?", MB_YESNO);
+          unsaved = MessageBox(hCrdTbl, IFYOULEAVE_MENUTEXT, L"Wait! Are you sure you want to leave the table?", MB_ICONWARNING | MB_YESNO);
           switch(unsaved){
             case IDYES:{
               alreadyOpen--;
