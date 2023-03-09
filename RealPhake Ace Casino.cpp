@@ -11,21 +11,22 @@
 using namespace std;
 
 // Window procedures
-LRESULT CALLBACK MainWndProc  (HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK UserInfoProc (HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK FTUSproc     (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK MainWndProc   (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK UserInfoProc  (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK FTUSproc      (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK CardTableProc (HWND, UINT, WPARAM, LPARAM);
 
 // Handlers
-HBITMAP hMainBG, hMemberBG, hFTUSbg;          // Bitmap backgrounds
-HMENU   hMenu, hTutorialMenu;                 // Menus
-HWND    hMainWnd, hUserInfo, hFTUS,           // Windows
-        hMx, hFirstname, hLastname,           // Saveable Text
-        hMainBGWnd, hMemberBGWnd, hFTUSbgWnd; // "Windows" of the BGs
+HBITMAP hMainBG, hMemberBG, hFTUSbg, hCrdTblBG; // Bitmap backgrounds
+HMENU   hMenu, hTutorialMenu, hCrdTblMenu;      // Menus
+HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl,    // Windows
+        hMx, hFirstname, hLastname,             // Saveable Text
+        hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,   // "Windows" of the BGs
+        hCrdTblBGWnd;
 
 int alreadyOpen = 0; // The function that prevents you opening more than one menu
 
 // Strings containing the user info
-string phakeCount;
 wstring userID, userJoinDateString, userMxString, userFirstnameString, userLastnameString;
 
 wchar_t userJoinDate[50];
@@ -143,7 +144,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   if(!RegisterClassW(&mui))
     return -1;
 
-  // Register for First Time User Setup window
+  // Register for First Time User Setup (FTUS) window
   WNDCLASSW ftus = {0};
 
   ftus.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -155,7 +156,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   if(!RegisterClassW(&ftus))
     return -1;
 
-  // First Time User Setup (FTUS) function. If user exists, makes the main window
+  // Register for the card table window
+  WNDCLASSW crdtbl = {0};
+
+  crdtbl.hbrBackground = (HBRUSH)COLOR_WINDOW;
+  crdtbl.hCursor       = LoadCursor(NULL, IDC_ARROW);
+  crdtbl.hInstance     = hInstance;
+  crdtbl.lpszClassName = L"CardTableClass";
+  crdtbl.lpfnWndProc   = CardTableProc;
+
+  if(!RegisterClassW(&crdtbl))
+    return -1;
+
+  // FTUS function. If user exists, makes the main window
   wifstream filein("UserInfo.txt", ios::in);
   if(filein.is_open()){
     getline(filein, userID);
@@ -170,7 +183,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         fileout<<ID;
         fileout.close();
       }
-      phakeCount = 5000;
       hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_DLGFRAME, 640, 275, 340, 479, NULL, NULL, NULL, NULL); // To do: Fix positioning & etc.
     }
     else{
@@ -213,7 +225,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       AppendMenu(hMenu, MF_STRING, 2, L"Card Skins");
       AppendMenu(hMenu, MF_POPUP,  (UINT_PTR) hTutorialMenu, L"How to Play");
       AppendMenu(hMenu, MF_STRING, 11, L"About");
-      AppendMenu(hMenu, MF_STRING, 12, (LPCWSTR) phakeCount.c_str()); // To do: dynamic phake counter
+      AppendMenu(hMenu, MF_STRING, 12, L"(phake here)"); // To do: dynamic phake counter
 
       // Tutorial options
       AppendMenu(hTutorialMenu, MF_STRING, 3,  L"How to Play: RealPhake Ace Casino");
@@ -228,8 +240,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
       AppendMenu(hTutorialMenu, MF_STRING, 10, L"How to Play: Slots");
       SetMenu(hWnd, hMenu);
 
-      // Buttons
-      CreateWindow(L"BUTTON", L"Play Poker!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU) 13, NULL, NULL); // Note for later: HIDE/SHOW BUTTONS?????
+      // Buttons // Note for later: HIDE/SHOW BUTTONS?????
+      CreateWindow(L"BUTTON", L"Play Poker!",     WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 47,  300, 125, 25, hWnd, (HMENU) 13, NULL, NULL);
       CreateWindow(L"BUTTON", L"Play Blackjack!", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 182, 300, 125, 25, hWnd, (HMENU) 14, NULL, NULL);
       CreateWindow(L"BUTTON", L"Play Tycoon!",    WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 317, 300, 125, 25, hWnd, (HMENU) 15, NULL, NULL);
       CreateWindow(L"BUTTON", L"Play War!",       WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 452, 300, 125, 25, hWnd, (HMENU) 16, NULL, NULL);
@@ -294,15 +306,27 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
         // The games
         case 13:
           // To do: Add Poker
+          hCrdTbl = CreateWindowW(L"CardTableClass", L"Poker", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 250, 75, 1280, 720, NULL, NULL, NULL, NULL);
+          ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
+          alreadyOpen++;
           break;
         case 14:
           // To do: Add Blackjack
+          hCrdTbl = CreateWindowW(L"CardTableClass", L"Blackjack", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 250, 75, 1280, 720, NULL, NULL, NULL, NULL);
+          ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
+          alreadyOpen++;
           break;
         case 15:
           // To do: Add Tycoon
+          hCrdTbl = CreateWindowW(L"CardTableClass", L"Tycoon", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 250, 75, 1280, 720, NULL, NULL, NULL, NULL);
+          ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
+          alreadyOpen++;
           break;
         case 16:
           // To do: Add War
+          hCrdTbl = CreateWindowW(L"CardTableClass", L"War", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 250, 75, 1280, 720, NULL, NULL, NULL, NULL);
+          ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
+          alreadyOpen++;
           break;
         case 17:
           // To do: Add Roulette
@@ -406,6 +430,45 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
 
     case WM_DESTROY:
       PostQuitMessage(0);
+      break;
+
+    default:
+      return DefWindowProcW(hWnd, msg, wp, lp);
+  }
+  return 0;
+}
+int unsaved;
+LRESULT CALLBACK CardTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Card Table window interactables
+  switch(msg){
+    case WM_CREATE:
+      // Bitmap shit(map)
+      hCrdTblBG = (HBITMAP)LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a Card Table BG
+      hCrdTblBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
+      SendMessageW(hCrdTblBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hCrdTblBG);
+
+      // Buttons
+      CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)1, NULL, NULL);
+
+      // Controls
+
+      break;
+
+    case WM_COMMAND:
+      switch(wp){
+        case 1:
+          unsaved = MessageBox(hCrdTbl, L"If you quit now, any Phake you spent will be forfeited.", L"Wait! Are you sure you want to leave?", MB_YESNO);
+          switch(unsaved){
+            case IDYES:{
+              alreadyOpen--;
+              ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
+              DestroyWindow(hWnd);
+              }
+          }
+          break;
+      }
+      break;
+
+    case WM_DESTROY:
       break;
 
     default:
