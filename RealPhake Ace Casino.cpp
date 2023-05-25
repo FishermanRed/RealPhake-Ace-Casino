@@ -18,13 +18,12 @@ LRESULT CALLBACK CardTableProc (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK RoulTableProc (HWND, UINT, WPARAM, LPARAM);
 
 // Handlers
-HBITMAP hMainBG, hMemberBG, hFTUSbg, hCrdTblBG, // Bitmap backgrounds
-        hRltTblBG;
-HMENU   hMenu, hTutorialMenu, hCrdTblMenu, hRltTblMenu;      // Menus
-HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl,    // Windows
-        hMx, hFirstname, hLastname,             // Saveable Text
-        hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,   // "Windows" of the BGs
-        hCrdTblBGWnd;
+HBITMAP hMainBG, hMemberBG, hFTUSbg, hCrdTblBG, hRltTblBG; // Bitmap backgrounds
+HMENU   hMenu, hTutorialMenu, hCrdTblMenu, hRltTblMenu;    // Menus
+HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl, hRltTbl,      // Windows
+        hMx, hFirstname, hLastname,                        // Saveable Text
+        hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,              // "Windows" of the BGs
+        hCrdTblBGWnd, hRltTblBGWnd;
 
 int screenWidth  = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -184,7 +183,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     return -1;
 
   // Register for the roulette table window
-  WNDCLASSW rlttbl = { 0 };
+  WNDCLASSW rlttbl = {0};
 
   rlttbl.hbrBackground = (HBRUSH)COLOR_WINDOW;
   rlttbl.hCursor       = LoadCursor(NULL, IDC_ARROW);
@@ -520,6 +519,45 @@ LRESULT CALLBACK CardTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Ca
 
     default:
       return DefWindowProcW(hWnd, msg, wp, lp);
+  }
+  return 0;
+}
+
+LRESULT CALLBACK RoulTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) { // Card Table window interactables
+  switch (msg) {
+  case WM_CREATE:
+    // Bitmap shit(map)
+    hRltTblBG = (HBITMAP)LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a Card Table BG
+    hRltTblBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
+    SendMessageW(hCrdTblBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hRltTblBG);
+
+    // Buttons
+    CreateWindow(L"BUTTON", L"Done", WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 615, 345, 50, 25, hWnd, (HMENU)1, NULL, NULL);
+
+    // Controls
+
+    break;
+
+  case WM_COMMAND:
+    switch (wp) {
+    case 1:
+      unsaved = MessageBox(hCrdTbl, IFYOULEAVE_MENUTEXT, L"Wait! Are you sure you want to leave the table?", MB_ICONWARNING | MB_YESNO);
+      switch (unsaved) {
+      case IDYES: {
+        alreadyOpen--;
+        ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
+        DestroyWindow(hWnd);
+      }
+      }
+      break;
+    }
+    break;
+
+  case WM_DESTROY:
+    break;
+
+  default:
+    return DefWindowProcW(hWnd, msg, wp, lp);
   }
   return 0;
 }
