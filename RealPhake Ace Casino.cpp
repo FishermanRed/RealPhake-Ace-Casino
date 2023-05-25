@@ -22,30 +22,24 @@ HBITMAP hMainBG, hMemberBG, hFTUSbg, hCrdTblBG, hRltTblBG; // Bitmap backgrounds
 HMENU   hMenu, hTutorialMenu, hCrdTblMenu, hRltTblMenu;    // Menus
 HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl, hRltTbl,      // Windows
         hMx, hFirstname, hLastname,                        // Saveable Text
-        hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,              // "Windows" of the BGs
+        hMemberBGWnd, hFTUSbgWnd, hMainBGWnd,              // "Windows" of the BGs
         hCrdTblBGWnd, hRltTblBGWnd;
 
 int screenWidth  = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-int alreadyOpen  = 0, // The function that prevents you opening more than one menu
-    unsaved,          // The function that warns the player before exiting a game
-    windowWidth,
-    windowHeight;
+int alreadyOpen  = 0,          // The function that prevents you opening more than one menu
+    unsaved,                   // The function that warns the player before exiting a game
+    windowWidth, windowHeight; // The functions that allow automatic screen centering
 
 // Strings containing the user info
 wstring userID, userJoinDateString, userMxString, userFirstnameString, userLastnameString;
 
-wchar_t userJoinDate[50];
-wchar_t userMx[5];
-wchar_t userFirstname[50];
-wchar_t userLastname[50];
-
-// To do: Dialogue and pronouns(?)
+wchar_t userJoinDate[50], userMx[5], userFirstname[50], userLastname[50]; // To do: Dialogue and pronouns
 
 void makeTimestamp(){ // The function that makes the join timestamp and fixes the ID during FTUS
   time_t today;
   time(&today);
-  string timeGrab = ctime(&today);
+  string timeGrab = ctime(&today); // To do: Fix ctime warning??
   string timestamp;
   timestamp.append(timeGrab, 4, 3);
   timestamp.append(timeGrab, 8, 2);
@@ -114,7 +108,7 @@ void writeUserInfo(){ // The function that writes all the user info into individ
   fileout.close();
 }
 
-void clearUserInfo(){
+void clearUserInfo(){ // Used for when FTUS does not finish or if player wants to reset save file
   wofstream fileout("UserInfo.txt", ios::out);
   if(fileout.is_open()){
     fileout<<"";
@@ -240,7 +234,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
   while(GetMessage(&msg, NULL, NULL, NULL)){
     TranslateMessage(&msg);
-    DispatchMessage(&msg);
+    DispatchMessage (&msg);
   } return 0;
 }
 
@@ -297,7 +291,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
             hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, windowX, windowY, windowWidth, windowHeight, hMainWnd,
             NULL, NULL, NULL);
             ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
-            alreadyOpen ++;
+            alreadyOpen++;
           }
           break;
 
@@ -419,7 +413,7 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
           GetWindowTextW(hLastname, userLastname, 50);
           break;
         case 2:
-          alreadyOpen --;
+          alreadyOpen--;
           ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
           DestroyWindow(hWnd);
           break;
@@ -439,7 +433,7 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
   switch(msg){
     case WM_CREATE:
       // Bitmap shit(map)
-      hFTUSbg = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\FTUS Clipboard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a FTUS BG
+      hFTUSbg    = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\FTUS Clipboard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a FTUS BG
       hFTUSbgWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
       SendMessageW(hFTUSbgWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hFTUSbg);
 
@@ -464,8 +458,8 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
           ShowWindow(hWnd, 0);
           windowWidth  = 640;
           windowHeight = 479;
-          int windowX = (screenWidth  - windowWidth)  / 2;
-          int windowY = (screenHeight - windowHeight) / 2;
+          int windowX  = (screenWidth  - windowWidth)  / 2;
+          int windowY  = (screenHeight - windowHeight) / 2;
           hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, windowX, windowY, windowWidth, windowHeight,
           NULL, NULL, NULL, NULL);
           MessageBox(hMainWnd, L"Now you're good to go!\nEnjoy your stay, and go earn some cash!", L"Registration Complete!", MB_OK);
@@ -488,7 +482,7 @@ LRESULT CALLBACK CardTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Ca
   switch(msg){
     case WM_CREATE:
       // Bitmap shit(map)
-      hCrdTblBG = (HBITMAP)LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a Card Table BG
+      hCrdTblBG    = (HBITMAP)LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a Card Table BG
       hCrdTblBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
       SendMessageW(hCrdTblBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hCrdTblBG);
 
@@ -523,11 +517,11 @@ LRESULT CALLBACK CardTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Ca
   return 0;
 }
 
-LRESULT CALLBACK RoulTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) { // Card Table window interactables
+LRESULT CALLBACK RoulTableProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) { // Roulette Table window interactables
   switch (msg) {
   case WM_CREATE:
     // Bitmap shit(map)
-    hRltTblBG = (HBITMAP)LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a Card Table BG
+    hRltTblBG    = (HBITMAP)LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a Roulette Table BG
     hRltTblBGWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
     SendMessageW(hCrdTblBGWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hRltTblBG);
 
