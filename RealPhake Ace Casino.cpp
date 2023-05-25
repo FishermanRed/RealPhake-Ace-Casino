@@ -15,10 +15,12 @@ LRESULT CALLBACK MainWndProc   (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK UserInfoProc  (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK FTUSproc      (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK CardTableProc (HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK RoulTableProc (HWND, UINT, WPARAM, LPARAM);
 
 // Handlers
-HBITMAP hMainBG, hMemberBG, hFTUSbg, hCrdTblBG; // Bitmap backgrounds
-HMENU   hMenu, hTutorialMenu, hCrdTblMenu;      // Menus
+HBITMAP hMainBG, hMemberBG, hFTUSbg, hCrdTblBG, // Bitmap backgrounds
+        hRltTblBG;
+HMENU   hMenu, hTutorialMenu, hCrdTblMenu, hRltTblMenu;      // Menus
 HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl,    // Windows
         hMx, hFirstname, hLastname,             // Saveable Text
         hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,   // "Windows" of the BGs
@@ -179,6 +181,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
   crdtbl.lpfnWndProc   = CardTableProc;
 
   if(!RegisterClassW(&crdtbl))
+    return -1;
+
+  // Register for the roulette table window
+  WNDCLASSW rlttbl = { 0 };
+
+  rlttbl.hbrBackground = (HBRUSH)COLOR_WINDOW;
+  rlttbl.hCursor       = LoadCursor(NULL, IDC_ARROW);
+  rlttbl.hInstance     = hInstance;
+  rlttbl.lpszClassName = L"RoulTableClass";
+  rlttbl.lpfnWndProc   = RoulTableProc;
+
+  if (!RegisterClassW(&rlttbl))
     return -1;
 
   // FTUS function. If user exists, makes the main window
