@@ -24,8 +24,12 @@ HWND    hMainWnd, hUserInfo, hFTUS, hCrdTbl,    // Windows
         hMainBGWnd, hMemberBGWnd, hFTUSbgWnd,   // "Windows" of the BGs
         hCrdTblBGWnd;
 
-int alreadyOpen = 0, // The function that prevents you opening more than one menu
-    unsaved;         // The function that warns the player before exiting a game
+int screenWidth  = GetSystemMetrics(SM_CXSCREEN);
+int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+int alreadyOpen  = 0, // The function that prevents you opening more than one menu
+    unsaved,          // The function that warns the player before exiting a game
+    windowWidth,
+    windowHeight;
 
 // Strings containing the user info
 wstring userID, userJoinDateString, userMxString, userFirstnameString, userLastnameString;
@@ -109,6 +113,14 @@ void writeUserInfo(){ // The function that writes all the user info into individ
   fileout.close();
 }
 
+void clearUserInfo(){
+  wofstream fileout("UserInfo.txt", ios::out);
+  if(fileout.is_open()){
+    fileout<<"";
+  }
+  fileout.close();
+}
+
 string makeID(const int len){ // The function that helps make the user's unique ID
   static const char ID[] =
     "0123456789987654321001234567899876543210"
@@ -184,10 +196,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         fileout<<ID;
         fileout.close();
       }
-      hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_DLGFRAME, 640, 275, 340, 479, NULL, NULL, NULL, NULL); // To do: Fix positioning & etc.
+      windowWidth  = 340 + 16;
+      windowHeight = 479 + 39;
+      int windowX  = (screenWidth  - windowWidth)  / 2;
+      int windowY  = (screenHeight - windowHeight) / 2;
+      hFTUS = CreateWindowW(L"FTUSwindowClass", L"VIP Member Sign Up", WS_VISIBLE | WS_DLGFRAME, windowX, windowY, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
     }
     else{
-      hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+      windowWidth  = 640;
+      windowHeight = 479;
+      int windowX  = (screenWidth  - windowWidth)  / 2;
+      int windowY  = (screenHeight - windowHeight) / 2;
+      hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, windowX, windowY, windowWidth, windowHeight,
+      NULL, NULL, NULL, NULL);
       // Location of the copy-from-strings from userinfo.txt
       // To do: Achievements
       getline(filein, userJoinDateString);
@@ -256,8 +277,13 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Main
         // Make User Info window
         case 1:
           if(alreadyOpen == 0){
-            hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, 615, 300, 691, 439, hMainWnd, NULL, NULL, NULL);
-            //ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
+            windowWidth  = 691;
+            windowHeight = 439;
+            int windowX  = (screenWidth  - windowWidth)  / 2;
+            int windowY  = (screenHeight - windowHeight) / 2;
+            hUserInfo = CreateWindowW(L"userInfoClass", L"User Info", WS_VISIBLE | WS_BORDER | !WS_SIZEBOX, windowX, windowY, windowWidth, windowHeight, hMainWnd,
+            NULL, NULL, NULL);
+            ShowWindow(hMainWnd, 0); // Uncomment for functioning hide/show
             alreadyOpen ++;
           }
           break;
@@ -381,7 +407,7 @@ LRESULT CALLBACK UserInfoProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // Use
           break;
         case 2:
           alreadyOpen --;
-          //ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
+          ShowWindow(hMainWnd, 1); // Uncomment for functioning hide/show
           DestroyWindow(hWnd);
           break;
       }
@@ -400,7 +426,7 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
   switch(msg){
     case WM_CREATE:
       // Bitmap shit(map)
-      hFTUSbg = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\testimage.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a FTUS BG
+      hFTUSbg = (HBITMAP) LoadImageW(NULL, L"Assets\\Backgrounds\\FTUS Clipboard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE); // To do: make a FTUS BG
       hFTUSbgWnd = CreateWindowW(L"STATIC", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 0, 0, CW_DEFAULT, CW_DEFAULT, hWnd, NULL, NULL, NULL);
       SendMessageW(hFTUSbgWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hFTUSbg);
 
@@ -423,13 +449,19 @@ LRESULT CALLBACK FTUSproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){ // FTUS wi
           GetWindowTextW(hFirstname, userFirstname, 50);
           GetWindowTextW(hLastname, userLastname, 50);
           ShowWindow(hWnd, 0);
-          hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, 640, 275, 640, 479, NULL, NULL, NULL, NULL);
+          windowWidth  = 640;
+          windowHeight = 479;
+          int windowX = (screenWidth  - windowWidth)  / 2;
+          int windowY = (screenHeight - windowHeight) / 2;
+          hMainWnd = CreateWindowW(L"mainWindowClass", L"RealPhake Ace Casino", WS_VISIBLE | WS_OVERLAPPEDWINDOW ^ WS_SIZEBOX, windowX, windowY, windowWidth, windowHeight,
+          NULL, NULL, NULL, NULL);
           MessageBox(hMainWnd, L"Now you're good to go!\nEnjoy your stay, and go earn some cash!", L"Registration Complete!", MB_OK);
           break;
       }
       break;
 
     case WM_DESTROY:
+      clearUserInfo();
       PostQuitMessage(0);
       break;
 
